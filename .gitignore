@@ -1,0 +1,13 @@
+
+.vs/
+bin/
+obj/
+*.user
+
+*.pfx
+*.pem
+*.old
+
+
+
+certificate.json

@@ -1,0 +1,3 @@
+﻿DB Tests/Rules
+
+Never more than one details_message per catagory per card. 
