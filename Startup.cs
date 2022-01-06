@@ -31,7 +31,7 @@ namespace ValidityAPI
 
             //load client rules from appsettings.json
             services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientRateLimitPolicies"));
-
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
             // inject counter and rules stores
             services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
             services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
