@@ -20,7 +20,7 @@ namespace ValidityAPI
         [Route("status")]
         public string status()
         {
-            return "up. Version 'pw reset' ip: " + listenIP + " " + DateTime.Now;
+            return "up. Version 1 ip: " + listenIP + " " + DateTime.Now;
         }
 
         [HttpGet]
