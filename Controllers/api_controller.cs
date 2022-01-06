@@ -27,6 +27,9 @@ namespace ValidityAPI
         [Route("check")]
         public HttpStatusCode check()
         {
+
+            if (statics.failed)
+                return HttpStatusCode.NoContent;
             return HttpStatusCode.OK;
         }
 

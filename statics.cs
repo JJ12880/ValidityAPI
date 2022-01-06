@@ -32,6 +32,8 @@ namespace ValidityAPI
         public static Market upbit_sdg_btc = new Market();
         public static Market upbit_thb_btc = new Market();
 
+        public static bool failed = true;
+
         public static void Update(Object stateInfo)
         {
             try
@@ -121,12 +123,13 @@ namespace ValidityAPI
                 response.Add(idr);
                 response.Add(sgd);
                 response.Add(thb);
-
+                failed = false;
 
             }
-            catch
+            catch (Exception e)
             {
                 Console.WriteLine("update failed" + DateTime.Now.ToString());
+                failed = true;
             }
 
 
