@@ -82,37 +82,37 @@ namespace ValidityAPI
                 usd.Add("currencyCode", "USD");
                 usd.Add("price", Math.Round(avg_val_price * bittrex_btc_usd.lastTradeRate, 8));
                 usd.Add("marketCap", Math.Round(avg_val_price * bittrex_btc_usd.lastTradeRate * circ_supply, 2));
-                usd.Add("accTradePrice24h", "");
+                usd.Add("accTradePrice24h", null);
 
                 JObject BTC = new JObject(base_info);
                 BTC.Add("currencyCode", "BTC");
                 BTC.Add("price", avg_val_price);
                 BTC.Add("marketCap", Math.Round(avg_val_price * circ_supply, 2));
-                BTC.Add("accTradePrice24h", "");
+                BTC.Add("accTradePrice24h", null);
 
                 JObject krw = new JObject(base_info);
                 krw.Add("currencyCode", "KRW");
                 krw.Add("price", Math.Round(avg_val_price * upbit_krw_btc.lastTradeRate, 2));
                 krw.Add("marketCap", Math.Round(avg_val_price * upbit_krw_btc.lastTradeRate * circ_supply, 2));
-                krw.Add("accTradePrice24h", "");
+                krw.Add("accTradePrice24h", null);
 
                 JObject idr = new JObject(base_info);
                 idr.Add("currencyCode", "IDR");
                 idr.Add("price", Math.Round(avg_val_price * upbit_idr_btc.lastTradeRate, 2));
                 idr.Add("marketCap", Math.Round(avg_val_price * upbit_idr_btc.lastTradeRate * circ_supply, 2));
-                idr.Add("accTradePrice24h", "");
+                idr.Add("accTradePrice24h", null);
 
                 JObject sgd = new JObject(base_info);
                 sgd.Add("currencyCode", "SGD");
                 sgd.Add("price", Math.Round(avg_val_price * upbit_sdg_btc.lastTradeRate, 2));
                 sgd.Add("marketCap", Math.Round(avg_val_price * upbit_sdg_btc.lastTradeRate * circ_supply, 2));
-                sgd.Add("accTradePrice24h", "");
+                sgd.Add("accTradePrice24h", null);
 
                 JObject thb = new JObject(base_info);
                 thb.Add("currencyCode", "THB");
                 thb.Add("price", Math.Round(avg_val_price * upbit_thb_btc.lastTradeRate, 2));
                 thb.Add("marketCap", Math.Round(avg_val_price * upbit_thb_btc.lastTradeRate * circ_supply, 2));
-                thb.Add("accTradePrice24h", "");
+                thb.Add("accTradePrice24h", null);
 
 
                 response = new JArray();
