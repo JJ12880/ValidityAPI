@@ -1,6 +1,6 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Threading;
 
@@ -8,16 +8,12 @@ namespace ValidityAPI
 {
     public static class statics
     {
-       
-
-        public static RPC_Credentials creds = new  RPC_Credentials(ConfigFileReader.lookup("rpc_user"), ConfigFileReader.lookup("rpc_pass"), ConfigFileReader.lookup("rpc_ip"), int.Parse(ConfigFileReader.lookup("rpc_port")));
+        public static RPC_Credentials creds = new RPC_Credentials(ConfigFileReader.lookup("rpc_user"), ConfigFileReader.lookup("rpc_pass"), ConfigFileReader.lookup("rpc_ip"), int.Parse(ConfigFileReader.lookup("rpc_port")));
         public static BitnetClient BC = new BitnetClient(creds);
 
         public static JArray response = new JArray();
 
         public static Timer timer = new Timer(Update, new AutoResetEvent(false), 1000, 30000);
-
-
 
         public static decimal circ_supply = 0;
         public static Market bittrex_val_btc = new Market();
@@ -25,7 +21,6 @@ namespace ValidityAPI
 
         public static Market bittrex_btc_usd = new Market();
         public static Market bittrex_val_usdt = new Market();
-
 
         public static Market upbit_krw_btc = new Market();
         public static Market upbit_idr_btc = new Market();
@@ -50,33 +45,45 @@ namespace ValidityAPI
 
                 using (HttpClient client = new HttpClient())
                 {
+                    TryThis(() =>
+                    {
+                        bittrex_btc_usd.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=USD-BTC").Result));
+                    });
+                    TryThis(() =>
+                    {
+                        bittrex_val_btc.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=btc-val").Result));
+                    });
 
-                    bittrex_btc_usd.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=USD-BTC").Result));
-                    bittrex_val_btc.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=btc-val").Result));
+                    TryThis(() =>
+                    {
+                        upbit_val_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://api.upbit.com/v1/ticker?markets=BTC-VAL").Result).First);
+                    });
 
-
-
-
-                    upbit_val_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://api.upbit.com/v1/ticker?markets=BTC-VAL").Result).First);
-
-
-                    upbit_krw_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://api.upbit.com/v1/ticker?markets=krw-BTC").Result).First);
+                    TryThis(() =>
+                    {
+                        upbit_krw_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://api.upbit.com/v1/ticker?markets=krw-BTC").Result).First);
+                    });
 
                     //krw
-                    upbit_krw_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://api.upbit.com/v1/ticker?markets=krw-BTC").Result).First);
-                    upbit_idr_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://id-api.upbit.com/v1/ticker?markets=idr-BTC").Result).First);
-                    upbit_sdg_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://sg-api.upbit.com/v1/ticker?markets=sgd-BTC").Result).First);
-                    upbit_thb_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://th-api.upbit.com/v1/ticker?markets=thb-BTC").Result).First);
-
+                    TryThis(() =>
+                    {
+                        upbit_krw_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://api.upbit.com/v1/ticker?markets=krw-BTC").Result).First);
+                    });
+                    TryThis(() =>
+                    {
+                        upbit_idr_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://id-api.upbit.com/v1/ticker?markets=idr-BTC").Result).First);
+                    });
+                    TryThis(() =>
+                    {
+                        upbit_sdg_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://sg-api.upbit.com/v1/ticker?markets=sgd-BTC").Result).First);
+                    });
+                    TryThis(() =>
+                    {
+                        upbit_thb_btc.upbit_parse((JObject)JArray.Parse(client.GetStringAsync("https://th-api.upbit.com/v1/ticker?markets=thb-BTC").Result).First);
+                    });
                 }
 
                 decimal avg_val_price = Math.Round((upbit_val_btc.lastTradeRate + bittrex_val_btc.lastTradeRate) / 2, 8);
-
-
-
-
-
-
 
                 JObject usd = new JObject(base_info);
                 usd.Add("currencyCode", "USD");
@@ -114,7 +121,6 @@ namespace ValidityAPI
                 thb.Add("marketCap", Math.Round(avg_val_price * upbit_thb_btc.lastTradeRate * circ_supply, 2));
                 thb.Add("accTradePrice24h", null);
 
-
                 response = new JArray();
 
                 response.Add(usd);
@@ -124,73 +130,65 @@ namespace ValidityAPI
                 response.Add(sgd);
                 response.Add(thb);
                 failed = false;
-
             }
             catch (Exception e)
             {
                 Console.WriteLine("update failed" + DateTime.Now.ToString());
                 failed = true;
             }
-
-
-
         }
 
+        private static void TryThis(Action action)
+        {
+            SafeExecutor(() => { action(); return 0; });
+        }
 
+        private static int SafeExecutor(Func<int> action)
+        {
+            try
+            {
+                return action();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return 0;
+        }
 
         private static decimal getPrice(decimal coin, decimal fiat)
         {
             return Math.Round(coin * fiat, 2);
         }
-
-       
-
-
     }
 
-    public  class Market_data
+    public class Market_data
     {
-        decimal fiat_price;
-        decimal market_cap;
+        private decimal fiat_price;
+        private decimal market_cap;
 
         public Market_data(decimal coin, decimal fiat, decimal supply)
         {
             fiat_price = Math.Round(coin * fiat, 2);
             market_cap = Math.Round(fiat_price * fiat, 2);
         }
-
-        
     }
-
 
     public class Market
     {
-
-
-      
-
         public void upbit_parse(JObject data)
         {
-
-            lastTradeRate = decimal.Parse(data["trade_price"].ToString());
-            volume = Math.Round(decimal.Parse(data["acc_trade_volume_24h"].ToString()), 2);
-           
+            lastTradeRate = decimal.Parse(data["trade_price"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
+            volume = Math.Round(decimal.Parse(data["acc_trade_volume_24h"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), 2);
         }
 
         public void bittrex_parse(JObject data)
         {
-
-            volume = Math.Round(decimal.Parse(data["result"][0]["Volume"].ToString()), 2);
-            lastTradeRate = decimal.Parse(data["result"][0]["Last"].ToString());
-            PrevDay = decimal.Parse(data["result"][0]["PrevDay"].ToString());
+            volume = Math.Round(decimal.Parse(data["result"][0]["Volume"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), 2);
+            lastTradeRate = decimal.Parse(data["result"][0]["Last"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
+            PrevDay = decimal.Parse(data["result"][0]["PrevDay"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
             rate_change = Math.Round(100 * (lastTradeRate - PrevDay) / ((lastTradeRate + PrevDay) / 2), 1);
-
         }
-
-
-
-
-
 
         public decimal volume;
         public decimal lastTradeRate;
@@ -199,6 +197,7 @@ namespace ValidityAPI
         public decimal price_change;
         public decimal rate_change;
     }
+
     public class RPC_Credentials
     {
         public RPC_Credentials(string user, string password, string ip, int port)
@@ -208,8 +207,6 @@ namespace ValidityAPI
             Ip = ip;
             Port = port;
         }
-
-       
 
         public string User;
         public string Password;
