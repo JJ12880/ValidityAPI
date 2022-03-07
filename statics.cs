@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
@@ -46,7 +46,7 @@ namespace ValidityAPI
                 base_info.Add("circulatingSupply", circ_supply);
                 base_info.Add("maxSupply", 9000000);
                 base_info.Add("provider", "ValidityTech.com");
-                base_info.Add("lastUpdatedTimestamp", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds());
+                base_info.Add("lastUpdatedTimestamp", new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds());
 
                 using (HttpClient client = new HttpClient())
                 {
