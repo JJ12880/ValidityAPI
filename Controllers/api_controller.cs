@@ -20,7 +20,7 @@ namespace ValidityAPI
         [Route("status")]
         public string status()
         {
-            return "up. Version 2 ip: " + listenIP + " " + DateTime.Now;
+            return "up. Version 3 ip: " + listenIP + " " + DateTime.Now;
         }
 
         [HttpGet]
