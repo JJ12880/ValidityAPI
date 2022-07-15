@@ -6,10 +6,9 @@ using System.Threading;
 
 namespace ValidityAPI
 {
-    public static class statics
+    public static class upbit
     {
-        public static RPC_Credentials creds = new RPC_Credentials(ConfigFileReader.lookup("rpc_user"), ConfigFileReader.lookup("rpc_pass"), ConfigFileReader.lookup("rpc_ip"), int.Parse(ConfigFileReader.lookup("rpc_port")));
-        public static BitnetClient BC = new BitnetClient(creds);
+      
 
         public static JArray response = new JArray();
 
@@ -35,7 +34,7 @@ namespace ValidityAPI
             {
                 JObject base_info = new JObject();
 
-                circ_supply = decimal.Parse(BC.gettxoutsetinfo()["total_amount"].ToString());
+                circ_supply = wallet.circ_supply;
 
                 base_info.Add("symbol", "VAL");
                 base_info.Add("circulatingSupply", circ_supply);
@@ -47,11 +46,12 @@ namespace ValidityAPI
                 {
                     TryThis(() =>
                     {
-                        bittrex_btc_usd.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=USD-BTC").Result));
+                   
+                        bittrex_btc_usd.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/v3/markets/BTC-USD/ticker").Result));
                     });
                     TryThis(() =>
                     {
-                        bittrex_val_btc.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/api/v1.1/public/getmarketsummary?market=btc-val").Result));
+                        bittrex_val_btc.bittrex_parse(JObject.Parse(client.GetStringAsync("https://api.bittrex.com/v3/markets/VAL-BTC/ticker").Result));
                     });
 
                     TryThis(() =>
@@ -179,38 +179,34 @@ namespace ValidityAPI
         public void upbit_parse(JObject data)
         {
             lastTradeRate = decimal.Parse(data["trade_price"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
-            volume = Math.Round(decimal.Parse(data["acc_trade_volume_24h"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), 2);
+            //volume = Math.Round(decimal.Parse(data["acc_trade_volume_24h"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), 2);
         }
 
         public void bittrex_parse(JObject data)
         {
-            volume = Math.Round(decimal.Parse(data["result"][0]["Volume"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint), 2);
-            lastTradeRate = decimal.Parse(data["result"][0]["Last"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
-            PrevDay = decimal.Parse(data["result"][0]["PrevDay"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
-            rate_change = Math.Round(100 * (lastTradeRate - PrevDay) / ((lastTradeRate + PrevDay) / 2), 1);
+            if (data["lastTradeRate"] != null)
+            {
+                lastTradeRate = decimal.Parse(data["lastTradeRate"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
+            }
+
+            if (data["volume"] != null)
+            {
+                //volume = decimal.Parse(data["volume"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
+            }
+
+
+            
+           //PrevDay = decimal.Parse(data["result"][0]["PrevDay"].ToString(), NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint);
+           // rate_change = Math.Round(100 * (lastTradeRate - PrevDay) / ((lastTradeRate + PrevDay) / 2), 1);
         }
 
-        public decimal volume;
+        //public decimal volume;
         public decimal lastTradeRate;
-        public decimal PrevDay;
+        //public decimal PrevDay;
 
-        public decimal price_change;
-        public decimal rate_change;
+        //public decimal price_change;
+       // public decimal rate_change;
     }
 
-    public class RPC_Credentials
-    {
-        public RPC_Credentials(string user, string password, string ip, int port)
-        {
-            User = user;
-            Password = password;
-            Ip = ip;
-            Port = port;
-        }
-
-        public string User;
-        public string Password;
-        public string Ip;
-        public int Port;
-    }
+   
 }

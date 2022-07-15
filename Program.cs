@@ -60,7 +60,9 @@ namespace ValidityAPI
                                             .AddEnvironmentVariables()
                                             .Build();
             }
-            statics.Update(new object());
+            upbit.Update(new object());
+            wallet.Update(new object());
+            stakingRewards.Update(new object());
 
             CreateWebHostBuilder(args, config).Build().RunAsync();
 

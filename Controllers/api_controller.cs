@@ -28,7 +28,7 @@ namespace ValidityAPI
         public HttpStatusCode check()
         {
 
-            if (statics.failed)
+            if (upbit.failed)
                 return HttpStatusCode.NoContent;
             return HttpStatusCode.OK;
         }
@@ -36,10 +36,16 @@ namespace ValidityAPI
         [HttpGet]
         [Route("val")]
         public JArray val(string id)
-        {
-          
+        {         
 
-            return statics.response;
+            return upbit.response;
+        }
+        [HttpGet]
+        [Route("staking")]
+        public JObject staking(string id)
+        {
+
+            return stakingRewards.response;
         }
     }
 }
