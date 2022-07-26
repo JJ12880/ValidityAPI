@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Globalization;
 using System.Net.Http;
@@ -20,11 +20,20 @@ namespace ValidityAPI
 
         public static void Update(Object stateInfo)
         {
-            response = new JObject();
-            response.Add("circulatingSupply", Math.Round( wallet.circ_supply,2));
-            response.Add("netstakeweight", netStakeWeight);
-            response.Add("blockcount", BC.GetBlockCount());
-            response.Add("stakereturn", Math.Round(((.485 * 1440 * 365) / (double) netStakeWeight) * 100, 2));
+            try {
+                JObject new_data = new JObject();
+
+                new_data = new JObject();
+                new_data.Add("circulatingSupply", Math.Round(wallet.circ_supply, 2));
+                new_data.Add("netstakeweight", netStakeWeight);
+                new_data.Add("blockcount", BC.GetBlockCount());
+                new_data.Add("stakereturn", Math.Round(((.485 * 1440 * 365) / (double)netStakeWeight) * 100, 2));
+                response = new_data;
+
+
+            }
+            catch { }
+            
         }
 
     }
