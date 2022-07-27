@@ -28,7 +28,7 @@ namespace ValidityAPI
         public HttpStatusCode check()
         {
 
-            if (upbit.failed || upbit.response.Count == 0 )
+            if (upbit.failed || upbit.circ_supply == 0 )
                 return HttpStatusCode.NoContent;
             return HttpStatusCode.OK;
         }
