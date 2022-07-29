@@ -1,4 +1,5 @@
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Threading;
 
@@ -21,8 +22,16 @@ namespace ValidityAPI
             try
             {
                 circ_supply = decimal.Parse(BC.gettxoutsetinfo()["total_amount"].ToString());
-                netstakeweight = decimal.Parse(BC.GetStakingInfo()["netstakeweight"].ToString());
+
+
+                JObject stakingInfo = BC.GetStakingInfo();
+                Console.WriteLine(stakingInfo);
+                string step1 = stakingInfo["netstakeweight"].ToString();
+                Console.WriteLine(step1);
+                netstakeweight = decimal.Parse(step1);
+                Console.WriteLine(netstakeweight);
                 Console.WriteLine(BC.GetStakingInfo().ToString());
+                
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);
