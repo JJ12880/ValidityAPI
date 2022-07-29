@@ -28,9 +28,8 @@ namespace ValidityAPI
                 Console.WriteLine(stakingInfo);
                 string step1 = stakingInfo["netstakeweight"].ToString();
                 Console.WriteLine(step1);
-                netstakeweight = decimal.Parse(step1);
+                netstakeweight = netstakeweight = Math.Round(decimal.Parse(step1) / 100000000,0); ;
                 Console.WriteLine(netstakeweight);
-                Console.WriteLine(BC.GetStakingInfo().ToString());
                 
             }
             catch (Exception e) {
