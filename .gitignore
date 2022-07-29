@@ -9,6 +9,6 @@ obj/
 *.old
 *.config
 
-
+*.conf
 certificate.json
 
