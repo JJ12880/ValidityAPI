@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Threading;
 
@@ -22,8 +22,12 @@ namespace ValidityAPI
             {
                 circ_supply = decimal.Parse(BC.gettxoutsetinfo()["total_amount"].ToString());
                 netstakeweight = decimal.Parse(BC.GetStakingInfo()["netstakeweight"].ToString());
+                Console.WriteLine(BC.GetStakingInfo().ToString());
             }
-            catch (Exception) { }
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
+            
+            }
             
 
         }

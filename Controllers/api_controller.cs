@@ -25,11 +25,11 @@ namespace ValidityAPI
 
         [HttpGet]
         [Route("check")]
-        public HttpStatusCode check()
+        public object check()
         {
 
-            if (upbit.failed || upbit.circ_supply == 0 )
-                return HttpStatusCode.NoContent;
+            if (upbit.failed || upbit.circ_supply == 0)
+                return null;
             return HttpStatusCode.OK;
         }
 
