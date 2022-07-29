@@ -14,7 +14,7 @@ namespace ValidityAPI
         public static JObject response = new JObject();
 
         public static Timer timer = new Timer(Update, new AutoResetEvent(false), 1000, 30000);
-        public static decimal netStakeWeight = Math.Round(wallet.netstakeweight / 100000000, 2);
+       
 
 
 
@@ -25,9 +25,9 @@ namespace ValidityAPI
 
                 new_data = new JObject();
                 new_data.Add("circulatingSupply", Math.Round(wallet.circ_supply, 2));
-                new_data.Add("netstakeweight", netStakeWeight);
+                new_data.Add("netstakeweight", wallet.netstakeweight);
                 new_data.Add("blockcount", BC.GetBlockCount());
-                new_data.Add("stakereturn", Math.Round(((.485 * 1440 * 365) / (double)netStakeWeight) * 100, 2));
+                new_data.Add("stakereturn", Math.Round(((.485 * 1440 * 365) / (double)wallet.netstakeweight) * 100, 2));
                 response = new_data;
 
 
